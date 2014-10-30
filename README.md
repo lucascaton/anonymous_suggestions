@@ -13,4 +13,4 @@ Install Bower packages:
 Run the server:
 
     cd server
-    DEBUG=server ./bin/www
+    npm start
