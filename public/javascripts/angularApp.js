@@ -66,3 +66,8 @@ angular.module('app', ['ui.router'])
       $scope.body = '';
     };
   }]);
+
+var mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost/anonymous_suggestions');
+require('./models/Suggestions');
+require('./models/Comments');
