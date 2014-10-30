@@ -57,7 +57,7 @@ angular.module('app', ['ui.router'])
     $scope.suggestion = suggestions.suggestions[$stateParams.id];
 
     $scope.addComment = function() {
-      if($scope.body === '') { return; }
+      if ($scope.body === '') { return; }
       $scope.suggestion.comments.push({
         body:    $scope.body,
         upvotes: 0
@@ -66,8 +66,3 @@ angular.module('app', ['ui.router'])
       $scope.body = '';
     };
   }]);
-
-var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/anonymous_suggestions');
-require('./models/Suggestions');
-require('./models/Comments');
