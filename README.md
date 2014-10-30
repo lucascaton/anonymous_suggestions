@@ -10,11 +10,11 @@ Check if you have node 0.10+
 
     node -v
 
-Install Bower packages:
+Install the packages:
 
+    npm install
     bower install
 
 Run the server:
 
-    cd server
     npm start
