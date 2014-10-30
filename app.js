@@ -1,68 +1,60 @@
-angular.module('app', ['ui.router'])
-  .config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRouterProvider) {
-    $stateProvider
-      .state('home', {
-        url:         '/home',
-        templateUrl: '/home.html',
-        controller:  'MainCtrl'
-      })
+var express = require('express');
+var path = require('path');
+var favicon = require('serve-favicon');
+var logger = require('morgan');
+var cookieParser = require('cookie-parser');
+var bodyParser = require('body-parser');
 
-      .state('suggestions', {
-        url:         '/suggestions/{id}',
-        templateUrl: '/suggestions.html',
-        controller:  'SuggestionsCtrl'
-      });
+var routes = require('./routes/index');
+var users = require('./routes/users');
 
-    $urlRouterProvider.otherwise('home');
-  }])
+var app = express();
 
-  .factory('suggestions', [function() {
-    var o = {
-      suggestions: []
-    };
+// view engine setup
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'ejs');
 
-    return o;
-  }])
+// uncomment after placing your favicon in /public
+//app.use(favicon(__dirname + '/public/favicon.ico'));
+app.use(logger('dev'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
 
-  .controller('MainCtrl', ['$scope', 'suggestions', function($scope, suggestions) {
-    $scope.description = '';
-    $scope.link        = '';
+app.use('/', routes);
+app.use('/users', users);
 
-    $scope.suggestions = suggestions.suggestions;
+// catch 404 and forward to error handler
+app.use(function(req, res, next) {
+    var err = new Error('Not Found');
+    err.status = 404;
+    next(err);
+});
 
-    $scope.addSuggestion = function() {
-      if ($scope.description === '') { return; }
+// error handlers
 
-      $scope.suggestions.push({
-        description: $scope.description,
-        link:        $scope.link,
-        upvotes:     0,
+// development error handler
+// will print stacktrace
+if (app.get('env') === 'development') {
+    app.use(function(err, req, res, next) {
+        res.status(err.status || 500);
+        res.render('error', {
+            message: err.message,
+            error: err
+        });
+    });
+}
 
-        comments: [
-          { body: 'Nice suggestion!',                    upvotes: 0 },
-          { body: 'Great idea but everything is wrong!', upvotes: 0 }
-        ]
-      });
+// production error handler
+// no stacktraces leaked to user
+app.use(function(err, req, res, next) {
+    res.status(err.status || 500);
+    res.render('error', {
+        message: err.message,
+        error: {}
+    });
+});
 
-      $scope.description = '';
-      $scope.link        = '';
-    };
 
-    $scope.incrementUpvotes = function(suggestion) {
-      suggestion.upvotes += 1;
-    };
-  }])
-
-  .controller('SuggestionsCtrl', ['$scope', '$stateParams', 'suggestions', function($scope, $stateParams, suggestions) {
-    $scope.suggestion = suggestions.suggestions[$stateParams.id];
-
-    $scope.addComment = function() {
-      if($scope.body === '') { return; }
-      $scope.suggestion.comments.push({
-        body:    $scope.body,
-        upvotes: 0
-      });
-
-      $scope.body = '';
-    };
-  }]);
+module.exports = app;
