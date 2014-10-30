@@ -4,21 +4,67 @@ angular.module('app', ['ui.router'])
       .state('home', {
         url:         '/home',
         templateUrl: '/home.html',
-        controller:  'MainCtrl'
+        controller:  'MainCtrl',
+
+        resolve: {
+          suggestionsPromise: ['suggestions', function(suggestions) {
+            return suggestions.getAll();
+          }]
+        }
       })
 
       .state('suggestions', {
         url:         '/suggestions/{id}',
         templateUrl: '/suggestions.html',
-        controller:  'SuggestionsCtrl'
+        controller:  'SuggestionsCtrl',
+
+        resolve: {
+          suggestion: ['$stateParams', 'suggestions', function($stateParams, suggestions) {
+            return suggestions.get($stateParams.id);
+          }]
+        }
       });
 
     $urlRouterProvider.otherwise('home');
   }])
 
-  .factory('suggestions', [function() {
+  .factory('suggestions', ['$http', function($http) {
     var o = {
       suggestions: []
+    };
+
+    o.getAll = function() {
+      return $http.get('/suggestions').success(function(data) {
+        angular.copy(data, o.suggestions);
+      });
+    };
+
+    o.create = function(suggestion) {
+      return $http.post('/suggestions', suggestion).success(function(data) {
+        o.suggestions.push(data);
+      });
+    };
+
+    o.upvote = function(suggestion) {
+      return $http.put('/suggestions/' + suggestion._id + '/upvote').success(function(data) {
+        suggestion.upvotes += 1;
+      });
+    };
+
+    o.get = function(id) {
+      return $http.get('/suggestions/' + id).then(function(res) {
+        return res.data;
+      });
+    };
+
+    o.addComment = function(id, comment) {
+      return $http.post('/suggestions/' + id + '/comments', comment);
+    };
+
+    o.upvoteComment = function(suggestion, comment) {
+      return $http.put('/suggestions/' + suggestion._id + '/comments/'+ comment._id + '/upvote').success(function(data) {
+        comment.upvotes += 1;
+      });
     };
 
     return o;
@@ -30,18 +76,14 @@ angular.module('app', ['ui.router'])
 
     $scope.suggestions = suggestions.suggestions;
 
+    window.b = suggestions;
+
     $scope.addSuggestion = function() {
       if ($scope.description === '') { return; }
 
-      $scope.suggestions.push({
+      suggestions.create({
         description: $scope.description,
         link:        $scope.link,
-        upvotes:     0,
-
-        comments: [
-          { body: 'Nice suggestion!',                    upvotes: 0 },
-          { body: 'Great idea but everything is wrong!', upvotes: 0 }
-        ]
       });
 
       $scope.description = '';
@@ -49,20 +91,24 @@ angular.module('app', ['ui.router'])
     };
 
     $scope.incrementUpvotes = function(suggestion) {
-      suggestion.upvotes += 1;
+      suggestions.upvote(suggestion);
     };
   }])
 
-  .controller('SuggestionsCtrl', ['$scope', '$stateParams', 'suggestions', function($scope, $stateParams, suggestions) {
-    $scope.suggestion = suggestions.suggestions[$stateParams.id];
+  .controller('SuggestionsCtrl', ['$scope', '$stateParams', 'suggestions', 'suggestion', function($scope, $stateParams, suggestions, suggestion) {
+    $scope.suggestion = suggestion;
 
     $scope.addComment = function() {
       if ($scope.body === '') { return; }
-      $scope.suggestion.comments.push({
-        body:    $scope.body,
-        upvotes: 0
+
+      suggestions.addComment(suggestion._id, { body: $scope.body, }).success(function(comment) {
+        $scope.suggestion.comments.push(comment);
       });
 
       $scope.body = '';
+    };
+
+    $scope.incrementUpvotes = function(comment) {
+      suggestions.upvoteComment(suggestion, comment);
     };
   }]);

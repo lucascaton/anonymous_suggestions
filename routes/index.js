@@ -35,9 +35,21 @@ router.param('suggestion', function(req, res, next, id) {
 
   query.exec(function (err, suggestion){
     if (err)         { return next(err); }
-    if (!suggestion) { return next(new Error("can't find suggestion")); }
+    if (!suggestion) { return next(new Error("Can't find suggestion")); }
 
     req.suggestion = suggestion;
+    return next();
+  });
+});
+
+router.param('comment', function(req, res, next, id) {
+  var query = Comment.findById(id);
+
+  query.exec(function (err, comment){
+    if (err)      { return next(err); }
+    if (!comment) { return next(new Error("Can't find comment")); }
+
+    req.comment = comment;
     return next();
   });
 });
@@ -53,6 +65,14 @@ router.put('/suggestions/:suggestion/upvote', function(req, res, next) {
     if (err) { return next(err); }
 
     res.json(suggestion);
+  });
+});
+
+router.put('/suggestions/:suggestion/comments/:comment/upvote', function(req, res, next) {
+  req.comment.upvote(function(err, suggestion) {
+    if (err) { return next(err); }
+
+    res.json(req.comment);
   });
 });
 

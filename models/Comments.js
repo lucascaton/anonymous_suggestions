@@ -6,4 +6,9 @@ var CommentSchema = new mongoose.Schema({
   suggestion: { type: mongoose.Schema.Types.ObjectId, ref: 'Suggestion' }
 });
 
+CommentSchema.methods.upvote = function(cb) {
+  this.upvotes += 1;
+  this.save(cb);
+};
+
 mongoose.model('Comment', CommentSchema);

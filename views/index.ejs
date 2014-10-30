@@ -15,8 +15,7 @@
     <div class='row'>
       <div class='col-md-6 col-md-offset-3'>
         <div class='page-header'>
-
-          <a href='#'>
+          <a ui-sref='home'>
             <img src='images/logo.png' alt='Logo'>
           </a>
         </div>
@@ -33,7 +32,8 @@
         <span style='font-size:20px; margin-left:10px;'>
           <a ng-show='suggestion.link' href='{{suggestion.link}}' target='_blank'>{{suggestion.description}}</a>
           <span ng-hide='suggestion.link'>{{suggestion.description}}</span>
-          <span><a href="#/suggestions/{{$index}}">Comments</a></span>
+          |
+          <span><a href="#/suggestions/{{suggestion._id}}">Comments ({{suggestion.comments.length}})</a></span>
         </span>
       </div>
 
