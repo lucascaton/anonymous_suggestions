@@ -14,15 +14,18 @@
   <body ng-app='app' ng-controller='MainCtrl'>
     <div class='row'>
       <div class='col-md-6 col-md-offset-3'>
+        <div class='page-header'>
+
+          <a href='#'>
+            <img src='images/logo.png' alt='Logo'>
+          </a>
+        </div>
+
         <ui-view></ui-view>
       </div>
     </div>
 
     <script type='text/ng-template' id='/home.html'>
-      <div class='page-header'>
-        <img src='images/logo.png' alt='Logo'>
-      </div>
-
       <div ng-repeat="suggestion in suggestions | orderBy: '-upvotes'">
         <span style='cursor: pointer;' class='glyphicon glyphicon-thumbs-up' ng-click='incrementUpvotes(suggestion)'></span>
         {{suggestion.upvotes}}
@@ -30,6 +33,7 @@
         <span style='font-size:20px; margin-left:10px;'>
           <a ng-show='suggestion.link' href='{{suggestion.link}}' target='_blank'>{{suggestion.description}}</a>
           <span ng-hide='suggestion.link'>{{suggestion.description}}</span>
+          <span><a href="#/suggestions/{{$index}}">Comments</a></span>
         </span>
       </div>
 
@@ -45,6 +49,32 @@
         </div>
 
         <button type='submit' class='btn btn-primary'>Send</button>
+      </form>
+    </script>
+
+    <script type='text/ng-template' id='/suggestions.html'>
+      <div class='page-header'>
+        <h4>Suggestion #id</h4>
+        <h2>
+          <a ng-show='suggestion.link' href='{{suggestion.link}}'>{{suggestion.description}}</a>
+          <span ng-hide='suggestion.link'>{{suggestion.description}}</span>
+        </h2>
+      </div>
+
+      <div ng-repeat="comment in suggestion.comments | orderBy:'-upvotes'">
+        <span class='glyphicon glyphicon-thumbs-up' ng-click='incrementUpvotes(comment)'></span>
+        {{comment.upvotes}}
+        <span style='font-size:20px; margin-left:10px;'>{{comment.body}}</span>
+      </div>
+
+     <form ng-submit='addComment()' style='margin-top:30px;'>
+        <h3>Add a new comment</h3>
+
+        <div class='form-group'>
+          <input type='text' class='form-control' placeholder='Comment' ng-model='body'></input>
+        </div>
+
+        <button type='submit' class='btn btn-primary'>Post</button>
       </form>
     </script>
   </body>
