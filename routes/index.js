@@ -8,6 +8,10 @@ var router     = express.Router();
 var Suggestion = mongoose.model('Suggestion');
 var Comment    = mongoose.model('Comment');
 
+router.get('/', function(req, res) {
+  res.render('index', { title: 'Anonymous Suggestions' });
+});
+
 router.get('/suggestions', function(req, res, next) {
   Suggestion.find(function(err, suggestions) {
     if (err) { return next(err); }
