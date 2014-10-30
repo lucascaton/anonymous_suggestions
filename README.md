@@ -18,3 +18,13 @@ Install the packages:
 Run the server:
 
     npm start
+
+## Database
+
+### How to clean the database?
+
+In mongo console:
+
+    use anonymous_suggestions
+    db.suggestions.remove({});
+    db.comments.remove({});
