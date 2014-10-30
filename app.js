@@ -1,24 +1,29 @@
 angular.module('app', [])
-  .controller('MainCtrl', ['$scope', function($scope) {
-    $scope.description = '';
+  .factory('suggestions', [function() {
+    var o = {
+      suggestions: []
+    };
 
-    $scope.suggestions = [
-      { description: 'suggestion 1', upvotes: 5 },
-      { description: 'suggestion 2', upvotes: 2 },
-      { description: 'suggestion 3', upvotes: 15 },
-      { description: 'suggestion 4', upvotes: 9 },
-      { description: 'suggestion 5', upvotes:  4}
-    ];
+    return o;
+  }])
+
+  .controller('MainCtrl', ['$scope', 'suggestions', function($scope, suggestions) {
+    $scope.description = '';
+    $scope.link        = '';
+
+    $scope.suggestions = suggestions.suggestions;
 
     $scope.addSuggestion = function() {
       if ($scope.description === '') { return; }
 
       $scope.suggestions.push({
         description: $scope.description,
+        link:        $scope.link,
         upvotes: 0
       });
 
       $scope.description = '';
+      $scope.link        = '';
     };
 
     $scope.incrementUpvotes = function(suggestion) {
