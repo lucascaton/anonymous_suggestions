@@ -83,7 +83,7 @@ angular.module('app', ['ui.router'])
 
       suggestions.create({
         description: $scope.description,
-        link:        $scope.link,
+        link:        $scope.link
       });
 
       $scope.description = '';
@@ -111,4 +111,28 @@ angular.module('app', ['ui.router'])
     $scope.incrementUpvotes = function(comment) {
       suggestions.upvoteComment(suggestion, comment);
     };
-  }]);
+  }])
+
+  .service('Notifications', ['$rootScope', function Notification($rootScope) {
+    var listen = function listen() {
+      var client = new Faye.Client('//localhost:8000/faye', {
+        timeout: 120
+      });
+
+      client.subscribe('/**', function(message) {
+        //message = angular.fromJson(message);
+        $rootScope.message = message;
+        $rootScope.$apply();
+      });
+    };
+
+    return {
+      listen: listen
+    };
+  }])
+
+  .run(function(Notifications) {
+    Notifications.listen();
+  })
+
+;

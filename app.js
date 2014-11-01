@@ -1,13 +1,24 @@
-var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
+'use strict';
+
+var express = require('express'),
+  faye    = require('faye'),
+  http    = require('http'),
+  path    = require('path'),
+  logger = require('morgan'),
+  cookieParser = require('cookie-parser'),
+  bodyParser = require('body-parser');
 
 var routes = require('./routes/index');
 
-var app = express();
+var app = express(),
+  server = http.createServer(app),
+  bayeux = new faye.NodeAdapter({mount: '/faye', timeout: 45});
+
+bayeux.attach(server);
+
+bayeux.on('handshake', function(clientId) {
+  console.log('Client connected', clientId);
+});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -54,4 +65,15 @@ app.use(function(err, req, res, next) {
   });
 });
 
-module.exports = app;
+
+setInterval(function(){
+  console.log('sending bayeux');
+  bayeux.getClient().publish('/testQueue', Date.now());
+}, 5000);
+
+
+var port = process.env.PORT || 8000;
+
+server.listen(port, function() {
+  console.log('Listening on ' + port);
+});
