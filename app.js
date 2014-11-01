@@ -1,18 +1,18 @@
 'use strict';
 
-var express = require('express'),
-  faye    = require('faye'),
-  http    = require('http'),
-  path    = require('path'),
-  logger = require('morgan'),
+var express    = require('express'),
+  faye         = require('faye'),
+  http         = require('http'),
+  path         = require('path'),
+  logger       = require('morgan'),
   cookieParser = require('cookie-parser'),
-  bayeux     = require('./bayeux'),
-  bodyParser = require('body-parser');
+  bayeux       = require('./bayeux'),
+  bodyParser   = require('body-parser');
 
-var routes = require('./routes/index');
+var routes     = require('./routes/index');
 
-var app = express(),
-  server = http.createServer(app);
+var app        = express(),
+    server     = http.createServer(app);
 
 bayeux.attach(server);
 
@@ -64,12 +64,5 @@ app.use(function(err, req, res, next) {
     error: {}
   });
 });
-
-
-setTimeout(function(){
-  console.log('sending bayeux');
-  bayeux.getClient().publish('/testQueue', Date.now());
-}, 5000);
-
 
 module.exports = server;

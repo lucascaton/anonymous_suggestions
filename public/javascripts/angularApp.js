@@ -53,7 +53,22 @@ angular.module('app', ['ui.router'])
 
     o.get = function(id) {
       return $http.get('/suggestions/' + id).then(function(res) {
-        return res.data;
+        var foundSuggestion;
+        var result;
+        for (var i=0; i < o.suggestions.length; i++){
+          if (o.suggestions[i]._id === id) {
+            foundSuggestion = o.suggestions[i];
+          }
+        }
+        if (foundSuggestion){
+          angular.extend(foundSuggestion, res.data);
+          result = foundSuggestion
+        }
+        else {
+          o.suggestions.push(res.data);
+          result = res.data
+        }
+        return result;
       });
     };
 
@@ -113,16 +128,20 @@ angular.module('app', ['ui.router'])
     };
   }])
 
-  .service('Notifications', ['$rootScope', function Notification($rootScope) {
+  .service('Notifications', ['$rootScope', '$stateParams', 'suggestions', function Notification($rootScope, $stateParams, suggestions) {
     var listen = function listen() {
       var client = new Faye.Client('//localhost:3000/faye', {
         timeout: 120
       });
+      client.subscribe('/notifications/suggestions', function() {
+        suggestions.getAll();
+      });
 
-      client.subscribe('/**', function(message) {
-        //message = angular.fromJson(message);
-        $rootScope.message = message;
-        $rootScope.$apply();
+      client.subscribe('/notifications/suggestions/messages', function(suggestionId) {
+        var currentId = $stateParams.id;
+        if (currentId === suggestionId){
+          suggestions.get(currentId);
+        }
       });
     };
 

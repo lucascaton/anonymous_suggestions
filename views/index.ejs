@@ -28,7 +28,7 @@
       <div ng-repeat="suggestion in suggestions | orderBy: '-upvotes'">
         <span style='cursor: pointer;' class='glyphicon glyphicon-thumbs-up' ng-click='incrementUpvotes(suggestion)'></span>
         {{suggestion.upvotes}}
-        <div>message {{message}}</div>
+
         <span style='font-size:20px; margin-left:10px;'>
           <a ng-show='suggestion.link' href='{{suggestion.link}}' target='_blank'>{{suggestion.description}}</a>
           <span ng-hide='suggestion.link'>{{suggestion.description}}</span>
