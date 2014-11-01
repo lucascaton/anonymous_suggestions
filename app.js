@@ -6,13 +6,13 @@ var express = require('express'),
   path    = require('path'),
   logger = require('morgan'),
   cookieParser = require('cookie-parser'),
+  bayeux     = require('./bayeux'),
   bodyParser = require('body-parser');
 
 var routes = require('./routes/index');
 
 var app = express(),
-  server = http.createServer(app),
-  bayeux = new faye.NodeAdapter({mount: '/faye', timeout: 45});
+  server = http.createServer(app);
 
 bayeux.attach(server);
 
@@ -66,7 +66,7 @@ app.use(function(err, req, res, next) {
 });
 
 
-setInterval(function(){
+setTimeout(function(){
   console.log('sending bayeux');
   bayeux.getClient().publish('/testQueue', Date.now());
 }, 5000);

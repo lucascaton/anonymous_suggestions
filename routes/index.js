@@ -13,6 +13,7 @@ var express    = require('express');
 var router     = express.Router();
 var Suggestion = mongoose.model('Suggestion');
 var Comment    = mongoose.model('Comment');
+var bayeux     = require('../bayeux');
 
 router.get('/', function(req, res) {
   res.render('index', { title: 'Anonymous Suggestions' });
@@ -31,7 +32,7 @@ router.post('/suggestions', function(req, res, next) {
 
   suggestion.save(function(err, suggestion) {
     if (err) { return next(err); }
-
+    bayeux.getClient().publish('/testQueue', 'new suggestion');
     res.json(suggestion);
   });
 });
