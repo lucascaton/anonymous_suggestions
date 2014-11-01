@@ -115,7 +115,7 @@ angular.module('app', ['ui.router'])
 
   .service('Notifications', ['$rootScope', function Notification($rootScope) {
     var listen = function listen() {
-      var client = new Faye.Client('//localhost:8000/faye', {
+      var client = new Faye.Client('//localhost:3000/faye', {
         timeout: 120
       });
 

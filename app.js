@@ -72,8 +72,4 @@ setInterval(function(){
 }, 5000);
 
 
-var port = process.env.PORT || 8000;
-
-server.listen(port, function() {
-  console.log('Listening on ' + port);
-});
+module.exports = server;
