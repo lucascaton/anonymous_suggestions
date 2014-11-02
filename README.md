@@ -13,7 +13,7 @@ Check if you have node 0.10+
 Install the packages:
 
     npm install
-    bower install
+    cd public && bower install
 
 Run the server:
 
