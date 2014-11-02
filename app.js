@@ -7,12 +7,11 @@ var express    = require('express'),
   logger       = require('morgan'),
   cookieParser = require('cookie-parser'),
   bayeux       = require('./bayeux'),
-  bodyParser   = require('body-parser');
+  bodyParser   = require('body-parser'),
 
-var routes     = require('./routes/index');
-
-var app        = express(),
-    server     = http.createServer(app);
+  routes       = require('./routes/index'),
+  app          = express(),
+  server       = http.createServer(app);
 
 bayeux.attach(server);
 

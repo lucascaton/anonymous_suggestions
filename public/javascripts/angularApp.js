@@ -55,19 +55,21 @@ angular.module('app', ['ui.router'])
       return $http.get('/suggestions/' + id).then(function(res) {
         var foundSuggestion;
         var result;
-        for (var i=0; i < o.suggestions.length; i++){
+
+        for (var i = 0; i < o.suggestions.length; i++) {
           if (o.suggestions[i]._id === id) {
             foundSuggestion = o.suggestions[i];
           }
         }
-        if (foundSuggestion){
+
+        if (foundSuggestion) {
           angular.extend(foundSuggestion, res.data);
-          result = foundSuggestion
-        }
-        else {
+          result = foundSuggestion;
+        } else {
           o.suggestions.push(res.data);
-          result = res.data
+          result = res.data;
         }
+
         return result;
       });
     };
@@ -133,13 +135,15 @@ angular.module('app', ['ui.router'])
       var client = new Faye.Client('//localhost:3000/faye', {
         timeout: 120
       });
+
       client.subscribe('/notifications/suggestions', function() {
         suggestions.getAll();
       });
 
       client.subscribe('/notifications/suggestions/messages', function(suggestionId) {
         var currentId = $stateParams.id;
-        if (currentId === suggestionId){
+
+        if (currentId === suggestionId) {
           suggestions.get(currentId);
         }
       });
@@ -152,6 +156,4 @@ angular.module('app', ['ui.router'])
 
   .run(function(Notifications) {
     Notifications.listen();
-  })
-
-;
+  });
