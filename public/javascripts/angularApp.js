@@ -132,7 +132,7 @@ angular.module('app', ['ui.router'])
 
   .service('Notifications', ['$rootScope', '$stateParams', 'suggestions', function Notification($rootScope, $stateParams, suggestions) {
     var listen = function listen() {
-      var client = new Faye.Client(process.env.NODE_ENV === 'production' ? process.env.HOST + '/faye' : '//localhost:3000/faye', {
+      var client = new Faye.Client('/faye', {
         timeout: 120
       });
 
