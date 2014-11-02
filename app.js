@@ -1,13 +1,24 @@
-var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
+'use strict';
 
-var routes = require('./routes/index');
+var express    = require('express'),
+  faye         = require('faye'),
+  http         = require('http'),
+  path         = require('path'),
+  logger       = require('morgan'),
+  cookieParser = require('cookie-parser'),
+  bayeux       = require('./bayeux'),
+  bodyParser   = require('body-parser');
 
-var app = express();
+var routes     = require('./routes/index');
+
+var app        = express(),
+    server     = http.createServer(app);
+
+bayeux.attach(server);
+
+bayeux.on('handshake', function(clientId) {
+  console.log('Client connected', clientId);
+});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -54,4 +65,4 @@ app.use(function(err, req, res, next) {
   });
 });
 
-module.exports = app;
+module.exports = server;

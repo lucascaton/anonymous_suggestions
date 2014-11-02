@@ -13,6 +13,7 @@ var express    = require('express');
 var router     = express.Router();
 var Suggestion = mongoose.model('Suggestion');
 var Comment    = mongoose.model('Comment');
+var bayeux     = require('../bayeux');
 
 router.get('/', function(req, res) {
   res.render('index', { title: 'Anonymous Suggestions' });
@@ -31,7 +32,7 @@ router.post('/suggestions', function(req, res, next) {
 
   suggestion.save(function(err, suggestion) {
     if (err) { return next(err); }
-
+    bayeux.getClient().publish('/notifications/suggestions', 'new suggestion');
     res.json(suggestion);
   });
 });
@@ -69,7 +70,7 @@ router.get('/suggestions/:suggestion', function(req, res, next) {
 router.put('/suggestions/:suggestion/upvote', function(req, res, next) {
   req.suggestion.upvote(function(err, suggestion) {
     if (err) { return next(err); }
-
+    bayeux.getClient().publish('/notifications/suggestions', 'new suggestion');
     res.json(suggestion);
   });
 });
@@ -77,7 +78,7 @@ router.put('/suggestions/:suggestion/upvote', function(req, res, next) {
 router.put('/suggestions/:suggestion/comments/:comment/upvote', function(req, res, next) {
   req.comment.upvote(function(err, suggestion) {
     if (err) { return next(err); }
-
+    bayeux.getClient().publish('/notifications/suggestions/messages', req.suggestion._id);
     res.json(req.comment);
   });
 });
@@ -93,7 +94,7 @@ router.post('/suggestions/:suggestion/comments', function(req, res, next) {
 
     req.suggestion.save(function(err, suggestion) {
       if(err) { return next(err); }
-
+      bayeux.getClient().publish('/notifications/suggestions/messages', req.suggestion._id);
       res.json(comment);
     });
   });
