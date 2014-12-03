@@ -5,7 +5,7 @@
     <title>Anonymous suggestions</title>
 
     <link href='bower_components/bootstrap/dist/css/bootstrap.min.css' rel='stylesheet'>
-    <script type='text/javascript' src="bower_components/faye/include.js"></script>
+    <script type='text/javascript' src='bower_components/faye/include.js'></script>
     <script type='text/javascript' src='bower_components/angular/angular.min.js'></script>
     <script type='text/javascript' src='bower_components/angular-ui-router/release/angular-ui-router.min.js'></script>
     <script type='text/javascript' src='javascripts/angularApp.js'></script>
@@ -33,7 +33,7 @@
           <a ng-show='suggestion.link' href='{{suggestion.link}}' target='_blank'>{{suggestion.description}}</a>
           <span ng-hide='suggestion.link'>{{suggestion.description}}</span>
           |
-          <span><a href="#/suggestions/{{suggestion._id}}">Comments ({{suggestion.comments.length}})</a></span>
+          <span><a href='#/suggestions/{{suggestion._id}}'>Comments ({{suggestion.comments.length}})</a></span>
         </span>
       </div>
 
@@ -54,7 +54,7 @@
 
     <script type='text/ng-template' id='/suggestions.html'>
       <div class='page-header'>
-        <h4>Suggestion #id</h4>
+        <h4>Suggestion #{{suggestion.id}}</h4>
         <h2>
           <a ng-show='suggestion.link' href='{{suggestion.link}}'>{{suggestion.description}}</a>
           <span ng-hide='suggestion.link'>{{suggestion.description}}</span>
