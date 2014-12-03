@@ -93,8 +93,6 @@ angular.module('app', ['ui.router'])
 
     $scope.suggestions = suggestions.suggestions;
 
-    window.b = suggestions;
-
     $scope.addSuggestion = function() {
       if ($scope.description === '') { return; }
 
